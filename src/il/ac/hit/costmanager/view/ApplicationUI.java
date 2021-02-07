@@ -386,8 +386,9 @@ public class ApplicationUI
      */
     public void removeCategories(ArrayList<Integer> indexToDelete)
     {
-        for (int index : indexToDelete) {
-            categoriesAL.remove(index);
+        if (categoriesAL.size() > 0)
+        {
+            categoriesAL.subList(0, categoriesAL.size()).clear();
         }
         upperPanel.removeCategories(indexToDelete);
     }

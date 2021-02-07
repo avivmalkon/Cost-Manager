@@ -11,18 +11,13 @@ public class Main
         if(bundle.connect() == Operation.FAILED)
         {
             // Handling failure with app components connections
-
-            // Maybe display an error message to the user
-
-
+            bundle.getView().displayMessage("An error occurred. Please try to restart the app.");
         }
         else
         {
             // App components connections succeed
-
             bundle.getViewModel().updateTable();
             bundle.getViewModel().updateCategories();
-
         }
     }
 }
