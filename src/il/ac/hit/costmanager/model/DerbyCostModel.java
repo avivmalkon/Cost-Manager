@@ -8,8 +8,8 @@ public class DerbyCostModel implements ICostModel
     private static final String EMBEDDED_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
     private static final String EMBEDDED_PROTOCOL = "jdbc:derby:";
 
-    private Statement _statement = null;
-    private Connection _connection = null;
+    private Statement statement = null;
+    private final Connection connection;
 
     /**
      * Derby model Constructor. Create the connection to derby server.
@@ -19,7 +19,7 @@ public class DerbyCostModel implements ICostModel
     {
         try {
             Class.forName(EMBEDDED_DRIVER);
-            _connection = DriverManager.getConnection(EMBEDDED_PROTOCOL + "derbyDB;create=true");
+            connection = DriverManager.getConnection(EMBEDDED_PROTOCOL + "derbyDB;create=true");
             setConnection();
         }
         catch (ClassNotFoundException | SQLException e) {
@@ -44,7 +44,7 @@ public class DerbyCostModel implements ICostModel
         PreparedStatement stat;
         try {
             setConnection();
-            stat = _connection.prepareStatement("INSERT INTO costTable(id,date,name,price,currency,category,note) VALUES(?,?,?,?,?,?,?)");
+            stat = connection.prepareStatement("INSERT INTO costTable(id,date,name,price,currency,category,note) VALUES(?,?,?,?,?,?,?)");
             stat.setString(1, String.valueOf(item.getId()));
             stat.setString(2, String.valueOf(item.getDate()));
             stat.setString(3, item.getDescription());
@@ -87,12 +87,12 @@ public class DerbyCostModel implements ICostModel
         try
         {
             setConnection();
-            rs = _statement.executeQuery("SELECT * FROM costTable ORDER BY id");
+            rs = statement.executeQuery("SELECT * FROM costTable ORDER BY id");
             if(rs != null)
             {
                 PreparedStatement stat;
                 for (var id:ids) {
-                    stat = _connection.prepareStatement("DELETE FROM costTable WHERE id = (?)");
+                    stat = connection.prepareStatement("DELETE FROM costTable WHERE id = (?)");
                     stat.setString(1, String.valueOf(id));
                     int statResult = stat.executeUpdate();
                     if (statResult != 0) {
@@ -137,7 +137,7 @@ public class DerbyCostModel implements ICostModel
         try
         {
             setConnection();
-            PreparedStatement stat = _connection.prepareStatement("INSERT INTO Categories(name) VALUES(?)");
+            PreparedStatement stat = connection.prepareStatement("INSERT INTO Categories(name) VALUES(?)");
             stat.setString(1, category.getName());
             int statResult = stat.executeUpdate();
             if(statResult != 0)
@@ -171,11 +171,11 @@ public class DerbyCostModel implements ICostModel
         try
         {
             setConnection();
-            rs = _statement.executeQuery("SELECT name FROM Categories");
+            rs = statement.executeQuery("SELECT name FROM Categories");
 
             if(rs != null){
                 for (Category category: categories) {
-                    PreparedStatement stat = _connection.prepareStatement("DELETE FROM Categories WHERE name = (?)");
+                    PreparedStatement stat = connection.prepareStatement("DELETE FROM Categories WHERE name = (?)");
                     stat.setString(1, category.getName());
                     int statResult = stat.executeUpdate();
                     if (statResult != 0) {
@@ -263,7 +263,7 @@ public class DerbyCostModel implements ICostModel
         try
         {
             setConnection();
-            rs = _statement.executeQuery(sqlQueryBuilder.toString());
+            rs = statement.executeQuery(sqlQueryBuilder.toString());
 
             return getCostItemsFromResultSet(rs);
 
@@ -290,7 +290,7 @@ public class DerbyCostModel implements ICostModel
         try
         {
             setConnection();
-            rs = _statement.executeQuery("SELECT * FROM costTable ORDER BY id");
+            rs = statement.executeQuery("SELECT * FROM costTable ORDER BY id");
 
             return getCostItemsFromResultSet(rs);
 
@@ -317,7 +317,7 @@ public class DerbyCostModel implements ICostModel
         try
         {
             setConnection();
-            rs = _statement.executeQuery("SELECT * FROM Categories");
+            rs = statement.executeQuery("SELECT * FROM Categories");
 
             int amountOfCostItems = 0;
             while(rs.next())
@@ -360,8 +360,8 @@ public class DerbyCostModel implements ICostModel
         try
         {
             setConnection();
-            boolean costTableResult = _statement.execute("DROP TABLE costTable");
-            boolean categoryTableResult = _statement.execute("DROP TABLE Categories");
+            boolean costTableResult = statement.execute("DROP TABLE costTable");
+            boolean categoryTableResult = statement.execute("DROP TABLE Categories");
             System.out.println("Table deleted");
 
             if(!costTableResult && !categoryTableResult)
@@ -393,8 +393,8 @@ public class DerbyCostModel implements ICostModel
         try
         {
             setConnection();
-            boolean costTableResult = _statement.execute("CREATE TABLE costTable(id INT,date VARCHAR(255),name VARCHAR(255),price DOUBLE,currency VARCHAR(255),category VARCHAR(255),note VARCHAR(255))");
-            boolean categoryResult = _statement.execute("CREATE TABLE Categories(name VARCHAR(255))");
+            boolean costTableResult = statement.execute("CREATE TABLE costTable(id INT,date VARCHAR(255),name VARCHAR(255),price DOUBLE,currency VARCHAR(255),category VARCHAR(255),note VARCHAR(255))");
+            boolean categoryResult = statement.execute("CREATE TABLE Categories(name VARCHAR(255))");
             System.out.println("Tables created");
 
             if(!costTableResult && !categoryResult)
@@ -421,7 +421,7 @@ public class DerbyCostModel implements ICostModel
     private void setConnection() throws CostManagerException
     {
         try{
-            _statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         } catch (SQLException e) {
             throw new CostManagerException(e.getMessage());
         }
@@ -434,8 +434,8 @@ public class DerbyCostModel implements ICostModel
     private void closeConnection() throws CostManagerException
     {
         try{
-            if(_statement != null)
-                _statement.close();
+            if(statement != null)
+                statement.close();
         } catch (SQLException e) {
             throw new CostManagerException(e.getMessage());
         }
