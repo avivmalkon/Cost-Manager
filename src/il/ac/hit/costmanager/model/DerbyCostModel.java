@@ -22,8 +22,8 @@ public class DerbyCostModel implements ICostModel
             _connection = DriverManager.getConnection(EMBEDDED_PROTOCOL + "derbyDB;create=true");
             setConnection();
         }
-        catch (ClassNotFoundException | SQLException | CostManagerException e) {
-            e.printStackTrace();
+        catch (ClassNotFoundException | SQLException e) {
+            throw new CostManagerException(e.getMessage());
         }
 
         finally {

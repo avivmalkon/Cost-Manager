@@ -70,6 +70,7 @@ public class ViewModel implements IViewModel
                     view.updateCategories(categories[0]);
                 } catch (CostManagerException e) {
                     e.printStackTrace();
+                    view.displayMessage(e.getMessage());
                 }
 
             }
@@ -92,6 +93,7 @@ public class ViewModel implements IViewModel
                     view.addCostItemToUI(costItemToAdd);
                 } catch (CostManagerException e) {
                     e.printStackTrace();
+                    view.displayMessage(e.getMessage());
                 }
             }
         });
@@ -114,6 +116,7 @@ public class ViewModel implements IViewModel
                     view.deleteCostItems(indexesToDeleteAL);
                 } catch (CostManagerException e) {
                     e.printStackTrace();
+                    view.displayMessage(e.getMessage());
                 }
             }
         });
@@ -135,6 +138,7 @@ public class ViewModel implements IViewModel
                     view.addCategoryToUI(categoryToAdd);
                 } catch (CostManagerException e) {
                     e.printStackTrace();
+                    view.displayMessage(e.getMessage());
                 }
             }
         });
@@ -168,6 +172,7 @@ public class ViewModel implements IViewModel
 
                 } catch (CostManagerException e) {
                     e.printStackTrace();
+                    view.displayMessage(e.getMessage());
                 }
             }
         });
@@ -190,6 +195,7 @@ public class ViewModel implements IViewModel
                     view.deleteCategories(indexToDelete);
                 } catch (CostManagerException e) {
                     e.printStackTrace();
+                    view.displayMessage(e.getMessage());
                 }
             }
         });
