@@ -1,8 +1,10 @@
 # Compiled class file
 *.class
 
+# Derby Files
 db-derby-10.14.2.0-bin/
 
+# HTML Files
 *.html
 
 # Log file
